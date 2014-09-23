@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Analysis of Data from Personal Activity Monitoring Devices by EvoDest</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Analysis of Data from Personal Activity Monitoring Devices</h1>
+          <h2></h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/EvoDest/RepData_PeerAssessment1/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/EvoDest/RepData_PeerAssessment1/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/EvoDest/RepData_PeerAssessment1" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="reproducible-research-peer-assessment-1" class="anchor" href="#reproducible-research-peer-assessment-1"><span class="octicon octicon-link"></span></a>Reproducible Research: Peer Assessment 1</h1>
+
+<h2>
+<a name="loading-and-preprocessing-the-data" class="anchor" href="#loading-and-preprocessing-the-data"><span class="octicon octicon-link"></span></a>Loading and preprocessing the data</h2>
+
+<blockquote>
+<p>Show any code that is needed to</p>
+
+<ol>
+<li>Load the data (i.e. read.csv())</li>
+<li>Process/transform the data (if necessary) into a format suitable for your analysis</li>
+</ol>
+</blockquote>
+
+<div class="highlight highlight-r"><pre>originalData <span class="o">&lt;-</span> read.csv<span class="p">(</span><span class="s">"activity.csv"</span><span class="p">)</span>
+</pre></div>
+
+<p>A portion of the original dataset is as follows:</p>
+
+<pre><code>##    steps       date interval
+## 1     NA 2012-10-01        0
+## 2     NA 2012-10-01        5
+## 3     NA 2012-10-01       10
+## 4     NA 2012-10-01       15
+## 5     NA 2012-10-01       20
+## 6     NA 2012-10-01       25
+## 7     NA 2012-10-01       30
+## 8     NA 2012-10-01       35
+## 9     NA 2012-10-01       40
+## 10    NA 2012-10-01       45
+## 11    NA 2012-10-01       50
+## 12    NA 2012-10-01       55
+## 13    NA 2012-10-01      100
+## 14    NA 2012-10-01      105
+## 15    NA 2012-10-01      110
+## 16    NA 2012-10-01      115
+## 17    NA 2012-10-01      120
+## 18    NA 2012-10-01      125
+## 19    NA 2012-10-01      130
+## 20    NA 2012-10-01      135
+</code></pre>
+
+<h2>
+<a name="what-is-mean-total-number-of-steps-taken-per-day" class="anchor" href="#what-is-mean-total-number-of-steps-taken-per-day"><span class="octicon octicon-link"></span></a>What is mean total number of steps taken per day?</h2>
+
+<blockquote>
+<p>For this part of the assignment, you can ignore the missing values in the dataset.</p>
+
+<ol>
+<li>Make a histogram of the total number of steps taken each day</li>
+<li>Calculate and report the mean and median total number of steps taken per day</li>
+</ol>
+</blockquote>
+
+<p>The goal of this section is to generate the overall mean (average) of the total number of steps taken per day.
+There are a few steps taken to reach this goal.</p>
+
+<ol>
+<li>
+<p>A dataset containing the total number of steps taken each day is created.</p>
+
+<div class="highlight highlight-r"><pre>dailyStepSum <span class="o">&lt;-</span> aggregate<span class="p">(</span>originalData<span class="o">$</span>steps<span class="p">,</span> <span class="kt">list</span><span class="p">(</span>originalData<span class="o">$</span><span class="kp">date</span><span class="p">),</span> <span class="kp">sum</span><span class="p">)</span>
+</pre></div>
+
+<p>A portion of the new dataset is as follows:</p>
+
+<pre><code>##          Date Steps
+## 1  2012-10-01    NA
+## 2  2012-10-02   126
+## 3  2012-10-03 11352
+## 4  2012-10-04 12116
+## 5  2012-10-05 13294
+## 6  2012-10-06 15420
+## 7  2012-10-07 11015
+## 8  2012-10-08    NA
+## 9  2012-10-09 12811
+## 10 2012-10-10  9900
+## 11 2012-10-11 10304
+## 12 2012-10-12 17382
+## 13 2012-10-13 12426
+## 14 2012-10-14 15098
+## 15 2012-10-15 10139
+## 16 2012-10-16 15084
+## 17 2012-10-17 13452
+## 18 2012-10-18 10056
+## 19 2012-10-19 11829
+## 20 2012-10-20 10395
+</code></pre>
+</li>
+<li>
+<p>A histogram of the above data is created as a form of visual representation.</p>
+
+<div class="highlight highlight-r"><pre><span class="kp">with</span><span class="p">(</span>dailyStepSum<span class="p">,</span> <span class="p">{</span>
+    par<span class="p">(</span>oma<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> mar<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">6.75</span><span class="p">,</span><span class="m">6.75</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> mgp<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">5.75</span><span class="p">,</span><span class="m">0.75</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> las<span class="o">=</span><span class="m">2</span><span class="p">)</span>
+    barplot<span class="p">(</span>
+      height<span class="o">=</span>Steps<span class="p">,</span>
+      main<span class="o">=</span><span class="s">"Graph of Total Steps taken per Day"</span><span class="p">,</span>
+      xlab<span class="o">=</span><span class="s">"Dates"</span><span class="p">,</span>
+      ylab<span class="o">=</span><span class="s">"Steps per Day"</span><span class="p">,</span>
+      names.arg<span class="o">=</span>Date<span class="p">,</span>
+      space<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+
+<p><img src="https://raw.githubusercontent.com/EvoDest/RepData_PeerAssessment1/master/figure/unnamed-chunk-5.png" alt=""></p>
+</li>
+<li>
+<p>Calculate the mean and median values (ignoring NA values) using the above dataset.</p>
+
+<ol>
+<li>
+<p>Mean</p>
+
+<div class="highlight highlight-r"><pre>dailyStepMean <span class="o">&lt;-</span> <span class="kp">mean</span><span class="p">(</span>dailyStepSum<span class="o">$</span>Steps<span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>## [1] 10766
+</code></pre>
+</li>
+<li>
+<p>Median</p>
+
+<div class="highlight highlight-r"><pre>dailyStepMedian <span class="o">&lt;-</span> median<span class="p">(</span>dailyStepSum<span class="o">$</span>Steps<span class="p">,</span> na.rm <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+
+<pre><code>## [1] 10765
+</code></pre>
+</li>
+</ol>
+</li>
+</ol><h2>
+<a name="what-is-the-average-daily-activity-pattern" class="anchor" href="#what-is-the-average-daily-activity-pattern"><span class="octicon octicon-link"></span></a>What is the average daily activity pattern?</h2>
+
+<blockquote>
+<p>What is the average daily activity pattern?</p>
+
+<ol>
+<li>Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</li>
+<li>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?</li>
+</ol>
+</blockquote>
+
+<p>This goal of this section is to find the mean (average) steps taken for eatch 5-minute time interval averaged over all the days in the data.
+Similar to the previous section, the steps taken to reach the above goal are as follows:</p>
+
+<ol>
+<li>
+<p>Generate the mean (average) number of steps taken (ignoring NA values) for each 5-minute interval, itself averaged across all days.</p>
+
+<div class="highlight highlight-r"><pre>intervalSteps <span class="o">&lt;-</span> aggregate<span class="p">(</span>
+    data<span class="o">=</span>originalData<span class="p">,</span>
+    steps<span class="o">~</span>interval<span class="p">,</span>
+    FUN<span class="o">=</span><span class="kp">mean</span><span class="p">,</span>
+    na.action<span class="o">=</span>na.omit
+<span class="p">)</span>
+<span class="kp">colnames</span><span class="p">(</span>intervalSteps<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Interval"</span><span class="p">,</span> <span class="s">"AvgStepsAvgAcrossDay"</span><span class="p">)</span>
+</pre></div>
+
+<p>A portion of the new dataset is as follows:</p>
+
+<pre><code>##    Interval AvgStepsAvgAcrossDay
+## 1         0              1.71698
+## 2         5              0.33962
+## 3        10              0.13208
+## 4        15              0.15094
+## 5        20              0.07547
+## 6        25              2.09434
+## 7        30              0.52830
+## 8        35              0.86792
+## 9        40              0.00000
+## 10       45              1.47170
+## 11       50              0.30189
+## 12       55              0.13208
+## 13      100              0.32075
+## 14      105              0.67925
+## 15      110              0.15094
+## 16      115              0.33962
+## 17      120              0.00000
+## 18      125              1.11321
+## 19      130              1.83019
+## 20      135              0.16981
+</code></pre>
+</li>
+<li>
+<p>A Time-Series plot is created from the above dataset</p>
+
+<div class="highlight highlight-r"><pre><span class="kp">with</span><span class="p">(</span>intervalSteps<span class="p">,</span> <span class="p">{</span>
+    plot<span class="p">(</span>
+      x<span class="o">=</span>Interval<span class="p">,</span>
+      y<span class="o">=</span>AvgStepsAvgAcrossDay<span class="p">,</span>
+      type<span class="o">=</span><span class="s">"l"</span><span class="p">,</span>
+      main<span class="o">=</span><span class="s">"Time-Series of Average Steps against Interval"</span><span class="p">,</span>
+      xlab<span class="o">=</span><span class="s">"5-minute Interval"</span><span class="p">,</span>
+      ylab<span class="o">=</span><span class="s">"Average Steps, Average across all Days"</span>
+
+    <span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+
+<p><img src="https://raw.githubusercontent.com/EvoDest/RepData_PeerAssessment1/master/figure/unnamed-chunk-12.png" alt=""></p>
+</li>
+<li>
+<p>Finding the 5-minute interval with the maximum number of steps</p>
+
+<div class="highlight highlight-r"><pre>intervalMax <span class="o">&lt;-</span> intervalSteps<span class="p">[</span>intervalSteps<span class="o">$</span>AvgStepsAvgAcrossDay<span class="o">==</span><span class="kp">max</span><span class="p">(</span>intervalSteps<span class="o">$</span>AvgStepsAvgAcrossDay<span class="p">),]</span>
+</pre></div>
+
+<pre><code>##     Interval AvgStepsAvgAcrossDay
+## 104      835                206.2
+</code></pre>
+
+<p>Therefore, the interval between <strong>835</strong> and  <strong>840</strong> minutes has the maximum number of steps.</p>
+</li>
+</ol><h2>
+<a name="imputing-missing-values" class="anchor" href="#imputing-missing-values"><span class="octicon octicon-link"></span></a>Imputing missing values</h2>
+
+<blockquote>
+<p>Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.</p>
+
+<ol>
+<li>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</li>
+<li>Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</li>
+<li>Create a new dataset that is equal to the original dataset but with the missing data filled in.</li>
+<li>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</li>
+</ol>
+</blockquote>
+
+<p>The goal of this section is to generate a new graph using the same data as from the first section but with its NA values replaced.</p>
+
+<p>To achieve this goal the mean (average) 5-minunte interval values as from the previous section will be used to replace the NA values.</p>
+
+<ol>
+<li>
+<p>Total number of rows with NA values in original data.</p>
+
+<div class="highlight highlight-r"><pre>countNA <span class="o">&lt;-</span> <span class="kp">nrow</span><span class="p">(</span><span class="kp">subset</span><span class="p">(</span>originalData<span class="p">,</span> <span class="kp">is.na</span><span class="p">(</span>originalData<span class="o">$</span>steps<span class="p">)))</span>
+</pre></div>
+
+<pre><code>## [1] 2304
+</code></pre>
+</li>
+<li>
+<p>The average 5-minute interval values from the prevous section is used to replace the NA values of the original data and a new dataset will be generated from the latter.</p>
+
+<p>Decimal values will be rounded up to a whole number.</p>
+
+<div class="highlight highlight-r"><pre>stepValues <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span>originalData<span class="o">$</span>steps<span class="p">)</span>
+stepValues<span class="p">[</span><span class="kp">is.na</span><span class="p">(</span>stepValues<span class="p">),]</span> <span class="o">&lt;-</span> <span class="kp">ceiling</span><span class="p">(</span><span class="kp">tapply</span><span class="p">(</span>X<span class="o">=</span>originalData<span class="o">$</span>steps<span class="p">,</span>INDEX<span class="o">=</span>originalData<span class="o">$</span>interval<span class="p">,</span>FUN<span class="o">=</span><span class="kp">mean</span><span class="p">,</span>na.rm<span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+newData <span class="o">&lt;-</span> <span class="kp">cbind</span><span class="p">(</span>stepValues<span class="p">,</span> originalData<span class="p">[,</span><span class="m">2</span><span class="o">:</span><span class="m">3</span><span class="p">])</span>
+<span class="kp">colnames</span><span class="p">(</span>newData<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Steps"</span><span class="p">,</span> <span class="s">"Date"</span><span class="p">,</span> <span class="s">"Interval"</span><span class="p">)</span>
+</pre></div>
+
+<p>A portion of the new dataset is as follows:</p>
+
+<pre><code>##    Steps       Date Interval
+## 1      2 2012-10-01        0
+## 2      1 2012-10-01        5
+## 3      1 2012-10-01       10
+## 4      1 2012-10-01       15
+## 5      1 2012-10-01       20
+## 6      3 2012-10-01       25
+## 7      1 2012-10-01       30
+## 8      1 2012-10-01       35
+## 9      0 2012-10-01       40
+## 10     2 2012-10-01       45
+## 11     1 2012-10-01       50
+## 12     1 2012-10-01       55
+## 13     1 2012-10-01      100
+## 14     1 2012-10-01      105
+## 15     1 2012-10-01      110
+## 16     1 2012-10-01      115
+## 17     0 2012-10-01      120
+## 18     2 2012-10-01      125
+## 19     2 2012-10-01      130
+## 20     1 2012-10-01      135
+</code></pre>
+</li>
+<li>
+<p>The total number of steps taken each day is generated using this new dataset.</p>
+
+<div class="highlight highlight-r"><pre>newDailyStepSum <span class="o">&lt;-</span> aggregate<span class="p">(</span>newData<span class="o">$</span>Steps<span class="p">,</span> <span class="kt">list</span><span class="p">(</span>newData<span class="o">$</span>Date<span class="p">),</span> <span class="kp">sum</span><span class="p">)</span>
+</pre></div>
+
+<p>A portion of the new dataset is as follows:</p>
+
+<pre><code>##          Date Steps
+## 1  2012-10-01 10909
+## 2  2012-10-02   126
+## 3  2012-10-03 11352
+## 4  2012-10-04 12116
+## 5  2012-10-05 13294
+## 6  2012-10-06 15420
+## 7  2012-10-07 11015
+## 8  2012-10-08 10909
+## 9  2012-10-09 12811
+## 10 2012-10-10  9900
+## 11 2012-10-11 10304
+## 12 2012-10-12 17382
+## 13 2012-10-13 12426
+## 14 2012-10-14 15098
+## 15 2012-10-15 10139
+## 16 2012-10-16 15084
+## 17 2012-10-17 13452
+## 18 2012-10-18 10056
+## 19 2012-10-19 11829
+## 20 2012-10-20 10395
+</code></pre>
+</li>
+<li>
+<p>A histogram of the above data is created as a form of visual representation.</p>
+
+<div class="highlight highlight-r"><pre><span class="kp">with</span><span class="p">(</span>newDailyStepSum<span class="p">,</span> <span class="p">{</span>
+    par<span class="p">(</span>oma<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> mar<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">6.75</span><span class="p">,</span><span class="m">6.75</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> mgp<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">5.75</span><span class="p">,</span><span class="m">0.75</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> las<span class="o">=</span><span class="m">2</span><span class="p">)</span>
+    barplot<span class="p">(</span>
+      height<span class="o">=</span>Steps<span class="p">,</span>
+      main<span class="o">=</span><span class="s">"Graph of Total Steps taken per Day"</span><span class="p">,</span>
+      xlab<span class="o">=</span><span class="s">"Dates"</span><span class="p">,</span>
+      ylab<span class="o">=</span><span class="s">"Steps per Day"</span><span class="p">,</span>
+      names.arg<span class="o">=</span>Date<span class="p">,</span>
+      space<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+
+<p><img src="https://raw.githubusercontent.com/EvoDest/RepData_PeerAssessment1/master/figure/unnamed-chunk-21.png" alt=""></p>
+</li>
+<li>
+<p>Calculate the mean and median values of this new dataset (NA values replaced with mean).</p>
+
+<ol>
+<li>
+<p>Mean</p>
+
+<div class="highlight highlight-r"><pre>newDailyStepMean <span class="o">&lt;-</span> <span class="kp">mean</span><span class="p">(</span>newDailyStepSum<span class="o">$</span>Steps<span class="p">)</span>
+</pre></div>
+
+<pre><code>## [1] 10785
+</code></pre>
+</li>
+<li>
+<p>Median</p>
+
+<div class="highlight highlight-r"><pre>newDailyStepMedian <span class="o">&lt;-</span> median<span class="p">(</span>newDailyStepSum<span class="o">$</span>Steps<span class="p">)</span>
+</pre></div>
+
+<pre><code>## [1] 10909
+</code></pre>
+</li>
+</ol>
+</li>
+<li>
+<p>It seems that adding the missing values to the original data has caused both the mean and median values to increase.</p>
+
+<ol>
+<li>
+<p>Mean:</p>
+
+<p>10766 to 10784</p>
+</li>
+<li>
+<p>Median:</p>
+
+<p>10765 to 10909</p>
+</li>
+</ol>
+</li>
+</ol><h2>
+<a name="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="anchor" href="#are-there-differences-in-activity-patterns-between-weekdays-and-weekends"><span class="octicon octicon-link"></span></a>Are there differences in activity patterns between weekdays and weekends?</h2>
+
+<blockquote>
+<p>For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.</p>
+
+<ol>
+<li>Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.</li>
+<li>Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was creating using simulated data:</li>
+</ol>
+</blockquote>
+
+<ol>
+<li>
+<p>A new column indicating whether the date is a weekday or a weekend is added to the new dataset created in the previous section.</p>
+
+<div class="highlight highlight-r"><pre>dateDayType <span class="o">&lt;-</span> <span class="kt">data.frame</span><span class="p">(</span><span class="kp">sapply</span><span class="p">(</span>X <span class="o">=</span> newData<span class="o">$</span>Date<span class="p">,</span> FUN <span class="o">=</span> <span class="kr">function</span><span class="p">(</span>day<span class="p">)</span> <span class="p">{</span>
+    <span class="kr">if</span> <span class="p">(</span><span class="kp">weekdays</span><span class="p">(</span><span class="kp">as.Date</span><span class="p">(</span>day<span class="p">))</span> <span class="o">%in%</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Monday"</span><span class="p">,</span> <span class="s">"Tuesday"</span><span class="p">,</span> <span class="s">"Wednesday"</span><span class="p">,</span> <span class="s">"Thursday"</span><span class="p">,</span> 
+        <span class="s">"Friday"</span><span class="p">))</span> <span class="p">{</span>
+        day <span class="o">&lt;-</span> <span class="s">"weekday"</span>
+    <span class="p">}</span> <span class="kr">else</span> <span class="p">{</span>
+        day <span class="o">&lt;-</span> <span class="s">"weekend"</span>
+    <span class="p">}</span>
+<span class="p">}))</span>
+
+newDataWithDayType <span class="o">&lt;-</span> <span class="kp">cbind</span><span class="p">(</span>newData<span class="p">,</span> dateDayType<span class="p">)</span>
+
+<span class="kp">colnames</span><span class="p">(</span>newDataWithDayType<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="s">"Steps"</span><span class="p">,</span> <span class="s">"Date"</span><span class="p">,</span> <span class="s">"Interval"</span><span class="p">,</span> <span class="s">"DayType"</span><span class="p">)</span>
+</pre></div>
+
+<p>A portion of this dataset is as follows:</p>
+
+<pre><code>##    Steps       Date Interval DayType
+## 1      2 2012-10-01        0 weekday
+## 2      1 2012-10-01        5 weekday
+## 3      1 2012-10-01       10 weekday
+## 4      1 2012-10-01       15 weekday
+## 5      1 2012-10-01       20 weekday
+## 6      3 2012-10-01       25 weekday
+## 7      1 2012-10-01       30 weekday
+## 8      1 2012-10-01       35 weekday
+## 9      0 2012-10-01       40 weekday
+## 10     2 2012-10-01       45 weekday
+## 11     1 2012-10-01       50 weekday
+## 12     1 2012-10-01       55 weekday
+## 13     1 2012-10-01      100 weekday
+## 14     1 2012-10-01      105 weekday
+## 15     1 2012-10-01      110 weekday
+## 16     1 2012-10-01      115 weekday
+## 17     0 2012-10-01      120 weekday
+## 18     2 2012-10-01      125 weekday
+## 19     2 2012-10-01      130 weekday
+## 20     1 2012-10-01      135 weekday
+</code></pre>
+</li>
+<li>
+<p>The data is then separated into weekday or weekend and the mean (average) number of steps taken for each 5-minute interval, itself averaged across all weekday days or weekend days is calculated.</p>
+
+<div class="highlight highlight-r"><pre>dayTypeIntervalSteps <span class="o">&lt;-</span> aggregate<span class="p">(</span>
+    data<span class="o">=</span>newDataWithDayType<span class="p">,</span>
+    Steps <span class="o">~</span> DayType <span class="o">+</span> Interval<span class="p">,</span>
+    FUN<span class="o">=</span><span class="kp">mean</span>
+<span class="p">)</span>
+</pre></div>
+
+<p>A portion of the dataset is as follows:</p>
+
+<pre><code>##    DayType Interval  Steps
+## 1  weekday        0 2.2889
+## 2  weekend        0 0.2500
+## 3  weekday        5 0.5333
+## 4  weekend        5 0.1250
+## 5  weekday       10 0.2889
+## 6  weekend       10 0.1250
+## 7  weekday       15 0.3111
+## 8  weekend       15 0.1250
+## 9  weekday       20 0.2222
+## 10 weekend       20 0.1250
+## 11 weekday       25 1.7111
+## 12 weekend       25 3.6250
+## 13 weekday       30 0.7556
+## 14 weekend       30 0.1250
+## 15 weekday       35 1.1556
+## 16 weekend       35 0.1250
+## 17 weekday       40 0.0000
+## 18 weekend       40 0.0000
+## 19 weekday       45 1.8667
+## 20 weekend       45 0.6250
+</code></pre>
+</li>
+<li>
+<p>Finally, a panel plot of both weekend and weekday graphs is generated.</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">library</span><span class="p">(</span><span class="s">"lattice"</span><span class="p">)</span>
+
+xyplot<span class="p">(</span>
+    type<span class="o">=</span><span class="s">"l"</span><span class="p">,</span>
+    data<span class="o">=</span>dayTypeIntervalSteps<span class="p">,</span>
+    Steps <span class="o">~</span> Interval <span class="o">|</span> DayType<span class="p">,</span>
+    xlab<span class="o">=</span><span class="s">"Interval"</span><span class="p">,</span>
+    ylab<span class="o">=</span><span class="s">"Number of steps"</span><span class="p">,</span>
+    layout<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+<p><img src="https://raw.githubusercontent.com/EvoDest/RepData_PeerAssessment1/master/figure/unnamed-chunk-30.png" alt=""></p>
+</li>
+</ol>
+        </section>
+
+        <footer>
+          Analysis of Data from Personal Activity Monitoring Devices is maintained by <a href="https://github.com/EvoDest">EvoDest</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
